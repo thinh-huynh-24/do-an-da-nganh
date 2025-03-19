@@ -62,7 +62,6 @@ export class AuthService {
     });
     return {
       user: {
-        id: user?.id,
         email: user?.email,
         name: user?.name,
       },
@@ -72,7 +71,9 @@ export class AuthService {
       },
     };
   }
-
+  async validateUser(username: string, password: string) {
+    return await this.userService.login(username, password);
+  }
   // async register(regiterDto: RegisterDto) {
   //   const newUser = await this.adminsService.register(regiterDto);
   //   return {

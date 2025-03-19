@@ -6,10 +6,7 @@ import { IUser } from 'src/interface/users.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private readonly configService: ConfigService,
-   
-  ) {
+  constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -19,12 +16,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   // trả về response sau khi xác thực token thành công
   async validate(payload: IUser) {
-    const { id, email, name, role } = payload;
-    return { 
-      id, 
-      email, 
+    const { id, email, name } = payload;
+    return {
+      id,
+      email,
       name,
-      role
     };
   }
 }

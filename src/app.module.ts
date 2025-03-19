@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './user/user.module';
+import { SettingModule } from './setting/setting.module';
+import { DeviceModule } from './device/device.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { UsersModule } from './user/user.module';
     ]),
     UsersModule,
     AuthModule,
+    SettingModule,
+    DeviceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
