@@ -16,6 +16,12 @@ export class DeviceService {
     });
   }
 
+  async getDataByDeviceId(deviceId: string) {
+    return this.prisma.deviceData.findMany({
+      where: { deviceId },
+      orderBy: { time: 'desc' }, // Sắp xếp theo thời gian mới nhất
+    });
+  }
   async findOne(id: string) {
     const device = await this.prisma.device.findUnique({
       where: { id },
@@ -26,7 +32,8 @@ export class DeviceService {
       throw new NotFoundException(`Device with ID ${id} not found`);
     }
 
-    return device;
+    let devicedata = await this.getDataByDeviceId(id);
+    return devicedata;
   }
 
   async findByUser(userId: string) {

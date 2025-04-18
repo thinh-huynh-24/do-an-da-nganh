@@ -1,6 +1,5 @@
 import {
   ExecutionContext,
-  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -16,30 +15,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   canActivate(context: ExecutionContext) {
-    // lấy ra metadata từ request
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (isPublic) {
-      return true;
-    }
-    return super.canActivate(context);
+    // Cho phép mọi request mà không cần token
+    return true;
   }
 
   handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
-    // if (user?.email === "admin@gmail.com" || user?.name === "admin") return user;
-    const request: Request = context.switchToHttp().getRequest();
-    // You can throw an exception based on either "info" or "err" arguments
-    if (err || !user) {
-      throw (
-        err ||
-        new UnauthorizedException(
-          'Your token is invalid or header is missing token',
-        )
-      );
-    }
-
-    return user;
+    // Bỏ qua lỗi xác thực và cho phép mọi request
+    return user || {}; // hoặc return một object trống
   }
 }

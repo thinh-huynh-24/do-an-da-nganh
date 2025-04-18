@@ -21,15 +21,15 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  hashpassword = (password: string) => {
-    const salt = genSaltSync(10);
-    const hash = hashSync(password, salt);
-    return hash;
-  };
+  // hashpassword = (password: string) => {
+  //   const salt = genSaltSync(10);
+  //   const hash = hashSync(password, salt);
+  //   return hash;
+  // };
 
-  CheckUserpassword(password: string, hash: string) {
-    return this.hashpassword(password) === hash;
-  }
+  // CheckUserpassword(password: string, hash: string) {
+  //   return this.hashpassword(password) === hash;
+  // }
 
   createRefreshToken(payload: any) {
     const refreshToken = this.jwtService.sign(payload, {

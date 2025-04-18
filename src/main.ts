@@ -15,22 +15,22 @@ async function bootstrap() {
   // config service for env
   const configService = app.get(ConfigService);
 
-  // config validation pipe
+  // global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
     }),
   );
 
-  // truyền metadata vào lobal guard
+  // use global guards and interceptors
   const reflector = app.get('Reflector');
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  //app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
 
-  // config cookie parser
+  // cookie parser
   app.use(cookieParser());
 
-  // config cors
+  // cors config
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -38,20 +38,23 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // config versioning
+  // API versioning
   app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: ['1', '2'],
   });
-  app.useStaticAssets(join(__dirname, '..', 'public')); // js, css, img, ...
-  app.setBaseViewsDir(join(__dirname, '..', 'views')); // views
+
+  // view & static assets
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
 
-  // config swagger
+  // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('API documentation')
-    .setDescription('Restful API')
+    .setTitle('API Documentation')
+    .setDescription('Restful API with NestJS')
+    .setVersion('1.0')
     .addBearerAuth(
       {
         type: 'http',
@@ -64,13 +67,14 @@ async function bootstrap() {
     .addSecurityRequirements('token')
     .build();
 
-  // start server at port ${PORT}
-  await app.listen(configService.get<string>('PORT'), () => {
-    console.log(
-      `Server is running at http://localhost:${configService.get<string>(
-        'PORT',
-      )}`,
-    );
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, document);
+
+  // start server
+  const port = configService.get<string>('PORT') || 8000;
+  await app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`📄 Swagger docs available at http://localhost:${port}/api-docs`);
   });
 }
 bootstrap();
